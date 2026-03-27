@@ -7,13 +7,13 @@ body {
   align-items: center; color: #e0e0e0; overflow: hidden; 
 }
 
-/* ตั้งค่าให้ตัวเกมเต็มจอและสลับรูปภาพพื้นหลังได้ (background-image ถูกสั่งจาก JS) */
+/* ตั้งค่าให้ตัวเกมเต็มจอและสลับรูปภาพพื้นหลังได้แบบนุ่มนวล */
 .game-window {
   position: relative; width: 100vw; max-width: none; height: 100vh; min-height: 100vh;
   background-color: #000000; border: none; border-radius: 0; display: flex;
   flex-direction: column; overflow: hidden; background-size: contain; 
   background-position: center; background-repeat: no-repeat; 
-  transition: background-image 0.5s ease-in-out; /* ทำให้เปลี่ยนฉากแบบ Fade นุ่มๆ */
+  transition: background-image 0.5s ease-in-out; 
 }
 
 /* ================= UI ด้านบน (Status Board) ================= */
@@ -50,16 +50,15 @@ body {
 .divider { margin: 0 20px; color: #777; }
 .money-value { color: #ffe000; font-weight: bold; }
 
-/* ================= หน้าต่าง POP-UP ตรงกลาง (Slot & Day Transition) ================= */
+/* ================= หน้าต่าง POP-UP ตรงกลางจอ ================= */
 .slot-screen {
-  position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); /* จัดให้อยู่ตรงกลางเป๊ะ */
+  position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); 
   background: rgba(0, 0, 0, 0.9); border: 3px solid #ffe000; border-radius: 15px; padding: 40px 60px;
   display: flex; flex-direction: column; align-items: center; gap: 20px; z-index: 50;
   box-shadow: 0 0 40px rgba(255, 224, 0, 0.4); backdrop-filter: blur(8px);
 }
 .slot-screen h2 { color: #ffffff; font-size: 2rem; margin: 0; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
 
-/* อนิเมชันของช่องสล็อตตอนสุ่มเงิน */
 .slots-container { display: flex; gap: 10px; }
 .slot {
   background: #222222; border: 2px solid #777; border-radius: 6px; width: 55px; height: 80px;
@@ -71,14 +70,13 @@ body {
   box-shadow: 0 0 15px rgba(255, 224, 0, 0.5) inset, 0 0 10px rgba(255, 224, 0, 0.5); text-shadow: 0 0 10px #ffe000;
 }
 
-/* เอฟเฟกต์ Pop-Out (ขยายแล้วจางหาย) ตอนที่สล็อตหยุดที่ตัวเลขเป้าหมาย */
 .pop-digit {
   position: absolute; font-size: 2.5rem; color: #ffe000; font-weight: bold; pointer-events: none;
   z-index: 30; text-shadow: 0 0 20px #ffe000; animation: popOut 0.8s ease-out forwards;
 }
 @keyframes popOut { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(3.5); opacity: 0; } }
 
-/* ================= CSS สำหรับหน้าต่างสรุปผลเปลี่ยนวัน ================= */
+/* ================= หน้าต่างสรุปผลเปลี่ยนวัน ================= */
 .day-title-text {
     font-size: 3rem; color: #ffe000; text-align: center; line-height: 1.2; text-shadow: 0 0 20px rgba(255, 224, 0, 0.6);
 }
@@ -86,19 +84,16 @@ body {
     margin-top: 15px; text-align: center; font-size: 1.6rem; color: #fff; width: 100%;
     min-width: 300px; background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 10px;
 }
-/* ฟอนต์ Monospace ทำให้ตัวเลขเรียงตรงกันสวยๆ */
 .spin-num {
     font-family: monospace; font-weight: bold; display: inline-block; min-width: 80px; text-align: right;
 }
-/* สไตล์สำหรับยอดเงินที่ใช้ไป (สีแดงกระแทกตา) */
 .spent-text {
     color: #ff4d4d; margin: 15px 0; font-weight: bold; text-shadow: 0 0 10px rgba(255, 77, 77, 0.6); transition: opacity 0.3s ease;
 }
-/* สไตล์เงินคงเหลือ (สีเขียว) */
 .remain-text { color: #40d668; text-shadow: 0 0 10px rgba(64, 214, 104, 0.6); }
 .summary-divider { border: none; border-top: 2px dashed #777; margin: 15px 0; }
 
-/* ================= อนิเมชันตัวเลขเด้งเวลากินข้าว/โดนหักพลังงาน ================= */
+/* ================= อนิเมชันตัวเลขเด้งเวลากินข้าว ================= */
 .floating-text {
   position: absolute; top: -20px; right: -20px; font-weight: bold; font-size: 1.3rem;
   animation: floatUp 1s ease-out forwards; pointer-events: none; z-index: 200;
@@ -118,69 +113,29 @@ body {
   border-top: 3px solid #fcfe20; border-left: none; border-right: none; border-bottom: none;
   padding: 25px 20px 20px 20px; font-size: 1.15rem; line-height: 1.6; min-height: 300px; border-radius: 0; width: 100%; color: white; 
 }
-/* ล็อกตำแหน่งปุ่มให้อยู่ฝั่งซ้ายแบบตายตัว */
 .action-buttons {
-  position: absolute;
-  bottom: 350px; 
-  left: 100px; /* ปักหมุดชิดซ้าย (สามารถเปลี่ยนตัวเลข 60px เพื่อขยับซ้าย-ขวาได้ตามใจชอบครับ) */
-  width: 400px; /* ล็อกความกว้างของกล่องให้คงที่ */
-  max-width: 90vw; /* ป้องกันไม่ให้ล้นจอในหน้าจอมือถือ */
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end; /* ล็อกให้ปุ่มเรียงซ้อนกันจากล่างขึ้นบนเสมอ (ไม่ให้ตัวล่างขยับ) */
-  gap: 12px;
-  z-index: 10;
-  opacity: 75%;
+  position: absolute; bottom: 350px; left: 100px; width: 400px; max-width: 90vw;
+  display: flex; flex-direction: column; justify-content: flex-end; gap: 12px; z-index: 10; opacity: 75%;
 }
-
-/* ล็อกความกว้างของปุ่มทุกอันให้เท่ากัน */
 .btn-action {
-  width: 100%; /* บังคับให้ปุ่มยืดเต็มกล่อง 400px เสมอ */
-  background: rgba(0, 0, 0, 0.8);
-  color: #ffffff;
-  padding: 15px 20px;
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-family: "LINE Seed Sans TH", sans-serif;
-  text-align: left;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-  backdrop-filter: blur(5px);
-  font-weight: bold;
+  width: 100%; background: rgba(0, 0, 0, 0.8); color: #ffffff; padding: 15px 20px; font-size: 1.1rem; cursor: pointer; transition: all 0.2s ease;
+  font-family: "LINE Seed Sans TH", sans-serif; text-align: left; box-shadow: 0 4px 6px rgba(0,0,0,0.3); backdrop-filter: blur(5px); font-weight: bold;
 }
 .btn-action:hover {
   background: #ffffff; color: #121212; transform: translateY(-3px) scale(1.02); box-shadow: 0 6px 10px rgba(64, 214, 104, 0.4);
 }
 .btn-action:disabled { opacity: 0.5; cursor: not-allowed; }
 
-/* ================= อนิเมชันตัวเลขเด้งกลางจอ (Center Floating Text) ================= */
+/* ================= อนิเมชันตัวเลขเด้งกลางจอ (Center Floating) ================= */
 .center-floating-text {
-  position: absolute;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-weight: bold;
-  font-size: 3.5rem; /* ตัวเลขใหญ่สะใจกระแทกตา */
-  pointer-events: none;
-  z-index: 9999;
-  animation: floatCenterUp 1.8s ease-out forwards;
-  text-shadow: 0 5px 15px rgba(0,0,0,0.9); /* เงาเข้มให้อ่านง่ายบนทุกฉาก */
-  white-space: nowrap; 
-  display: flex;
-  align-items: center;
-  gap: 15px;
+  position: absolute; left: 50%; transform: translate(-50%, -50%); font-weight: bold; font-size: 3.5rem; 
+  pointer-events: none; z-index: 9999; animation: floatCenterUp 1.8s ease-out forwards;
+  text-shadow: 0 5px 15px rgba(0,0,0,0.9); white-space: nowrap; display: flex; align-items: center; gap: 15px;
 }
+.center-floating-text.money-up, .center-floating-text.money-down { top: 40%; }
+.center-floating-text.energy-up, .center-floating-text.energy-down { top: 50%; }
+.center-floating-text.mood-up, .center-floating-text.mood-down { top: 60%; }
 
-/* แยกระดับความสูง เพื่อไม่ให้ตัวเลขเด้งทับกันเวลามีหลายเหตุการณ์พร้อมกัน */
-.center-floating-text.money-up, 
-.center-floating-text.money-down { top: 40%; }
-
-.center-floating-text.energy-up, 
-.center-floating-text.energy-down { top: 50%; }
-
-.center-floating-text.mood-up, 
-.center-floating-text.mood-down { top: 60%; }
-
-/* กำหนดสีของแต่ละสถานะ */
 .center-floating-text.money-up { color: #ffe000; } 
 .center-floating-text.money-down { color: #ff4d4d; } 
 .center-floating-text.energy-up { color: #00d2ff; } 
@@ -188,83 +143,70 @@ body {
 .center-floating-text.mood-up { color: #ea5180; } 
 .center-floating-text.mood-down { color: #9f70ba; } 
 
-/* แอนิเมชันเด้งขึ้นมาแล้วค่อยๆ ลอยจางหายไปด้านบน */
 @keyframes floatCenterUp {
   0% { opacity: 0; margin-top: 50px; transform: translate(-50%, -50%) scale(0.5); }
   20% { opacity: 1; margin-top: 0px; transform: translate(-50%, -50%) scale(1.1); }
   100% { opacity: 0; margin-top: -150px; transform: translate(-50%, -50%) scale(1); }
 }
 
-/* ==========================================================
-   =============== โหมดมือถือ (แสดงผลเฉพาะจอมือถือเท่านั้น) ===============
-   ========================================================== */
-
-/* 🌟 เปลี่ยนจาก 768px เป็น 767px เพื่อให้ iPad กลายเป็นจอคอมพิวเตอร์ */
+/* ================= โหมดจอมือถือ ================= */
 @media screen and (max-width: 767px) {
-  .status-board-container { 
-    padding: 15px 15px; 
-  }
-  
-  .status-board {
-    display: flex;
-    flex-direction: row; 
-    flex-wrap: wrap; 
-    justify-content: center;
-    align-items: center;
-    gap: 8px; 
-  }
-
-  .left-side, .right-side {
-    display: contents; 
-  }
-
+  .status-board-container { padding: 15px 15px; }
+  .status-board { display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; }
+  .left-side, .right-side { display: contents; }
   .left-side .capsule { order: 1; } 
   .right-side .capsule { order: 2; } 
-  
-  .btn-lang { 
-    order: 3; 
-    margin-right: auto; 
-  }     
-  
-  .capsule-circle-weather { 
-    order: 4; 
-    position: static; 
-    width: 50px; 
-    height: 50px; 
-    margin: 0;
-  }
+  .btn-lang { order: 3; margin-right: auto; }     
+  .capsule-circle-weather { order: 4; position: static; width: 50px; height: 50px; margin: 0; }
   #weather-ui { font-size: 1.5rem; }
-
-  .mood-content { 
-    order: 5; 
-    margin-left: auto; 
-  } 
-
-  .capsule, .mood-content, .btn-lang {
-    font-size: 0.9rem;
-    padding: 6px 12px;
-  }
-  
+  .mood-content { order: 5; margin-left: auto; } 
+  .capsule, .mood-content, .btn-lang { font-size: 0.9rem; padding: 6px 12px; }
   .icon { font-size: 1rem; margin-right: 3px; }
-
-  .circle-ui-bg { 
-    width: 250px; 
-    height: 250px; 
-    top: -50px; 
-  }
-
-  .action-buttons { 
-    left: 50%; 
-    transform: translateX(-50%); 
-    bottom: 380px; 
-    width: 90%; 
-  }
-  
+  .circle-ui-bg { width: 250px; height: 250px; top: -50px; }
+  .action-buttons { left: 50%; transform: translateX(-50%); bottom: 380px; width: 90%; }
   .center-floating-text { font-size: 2.2rem; }
-  
-  .story-box { 
-    font-size: 1rem; 
-    min-height: 250px; 
-    padding: 20px 15px 15px 15px; 
-  }
+  .story-box { font-size: 1rem; min-height: 250px; padding: 20px 15px 15px 15px; }
 }
+
+/* ==========================================================
+     =============== ปรับขนาด Pop-up สรุปวันและสล็อต (โหมดมือถือ) ===============
+     ========================================================== */
+
+  /* ลดขนาดกล่องพื้นหลังไม่ให้ล้นจอ */
+  .slot-screen {
+    padding: 25px 20px;
+    width: 90%; 
+    max-width: 350px;
+  }
+
+  /* ลดขนาดตัวอักษรหัวข้อสล็อต */
+  .slot-screen h2 {
+    font-size: 1.5rem;
+  }
+
+  /* ปรับขนาดกล่องตัวเลขสล็อตให้เล็กลง */
+  .slot {
+    width: 45px;
+    height: 65px;
+    font-size: 2rem;
+  }
+
+  /* ย่อขนาดตัวอักษรวันที่เปลี่ยนวัน */
+  .day-title-text {
+    font-size: 2.2rem;
+  }
+
+  /* ปรับขนาดกล่องและตัวอักษรของตารางสรุปเงินให้พอดีจอ */
+  .summary-box {
+    font-size: 1.2rem;
+    padding: 15px;
+    min-width: 250px;
+    margin-top: 10px;
+  }
+
+  /* ย่อขนาดปุ่มกดไปต่อ */
+  #btn-continue-day {
+    font-size: 1rem;
+    padding: 10px 15px;
+    margin-top: 15px !important;
+  }

@@ -1,6 +1,7 @@
 // ================= ข้อมูลตั้งต้นและระบบภาษา =================
 let currentLang = 'th'; 
 
+// *LOGIC: ฟังก์ชันสลับภาษา* เช็คว่า currentLang เป็น en ไหม ถ้าใช่ส่งข้อความภาษาอังกฤษกลับ ถ้าไม่ใช่ส่งภาษาไทยกลับ
 function l(thText, enText) { return currentLang === 'en' ? enText : thText; }
 
 const FOOD_MENU = [
@@ -28,7 +29,7 @@ const sfxMoodDrain = new Audio('sound/energy-drain.mp3');
 const sfxSpin = new Audio('sound/spin.wav'); sfxSpin.loop = true; 
 
 function playSfx(audioObj) {
-    audioObj.currentTime = 0;
+    audioObj.currentTime = 0; // รีเซ็ตเวลาเป็น 0 เพื่อให้กดรัวๆ แล้วเสียงเล่นซ้ำได้ทันที
     audioObj.play().catch(err => console.log("SFX play failed:", err));
 }
 
@@ -44,10 +45,11 @@ let startOfDayMoney = 0;
 let tempBonusTh = ""; 
 let tempBonusEn = ""; 
 
+// ตัวแปรสำหรับเก็บประวัติเนื้อเรื่องปัจจุบัน ไว้ใช้อัปเดตภาษา Real-time ตอนกดปุ่ม
 let activeStory = { senderTh: "", senderEn: "", textTh: "", textEn: "" };
 let activeButtons = [];
 
-// ================= เชื่อมต่อ UI =================
+// ================= เชื่อมต่อตัวแปรกับ HTML =================
 const uiDay = document.getElementById("day-ui");
 const uiWeather = document.getElementById("weather-ui");
 const uiTime = document.getElementById("time-ui");
@@ -60,13 +62,16 @@ const IMAGE_PATH = 'image/';
 
 // ================= ระบบเปลี่ยนภาษาหลัก =================
 function toggleLanguage() {
+    // สลับภาษาปัจจุบัน
     currentLang = currentLang === 'th' ? 'en' : 'th';
     
+    // อัปเดต Label (ป้ายกำกับคงที่บนหน้าจอ)
     document.getElementById("lbl-money").textContent = l("เงิน:", "Money:");
     document.getElementById("lbl-energy").textContent = l("พลัง:", "Energy:");
     document.getElementById("lbl-date").textContent = l("วันที่:", "Day:");
     document.getElementById("lbl-time").textContent = l("เวลา:", "Time:");
     
+    // อัปเดตคำในหน้าต่าง Pop-up
     const slotTitle = document.getElementById("slot-title");
     if(slotTitle) slotTitle.textContent = l("เงินทุนของคุณคือ", "Your Starting Fund");
 
@@ -79,11 +84,11 @@ function toggleLanguage() {
     }
     
     const dayTitle = document.getElementById("transition-day-title");
-    if(dayTitle) {
-        dayTitle.innerHTML = l(`วันที่ ${currentDay}`, `DAY ${currentDay}`);
-    }
+    if(dayTitle) dayTitle.innerHTML = l(`วันที่ ${currentDay}`, `DAY ${currentDay}`);
 
+    // อัปเดตแถบสถานะให้เป็นภาษาล่าสุด
     updateStats();
+    // รีเฟรชกล่องข้อความและปุ่มด้านล่าง
     refreshUI();
 }
 
@@ -97,6 +102,7 @@ function setButtons(buttonsArray) {
     refreshUI();
 }
 
+// *LOGIC:* ฟังก์ชันอัปเดตกล่องข้อความและปุ่มใหม่ทั้งหมดตามภาษาที่ถูกเลือก
 function refreshUI() {
     const nameTag = document.getElementById("speaker-name");
     const storyText = document.getElementById("story-text");
@@ -114,13 +120,13 @@ function refreshUI() {
     });
 }
 
-// ================= ฟังก์ชันช่วยเหลือพื้นฐาน =================
+// ================= ฟังก์ชันช่วยเหลือทั่วไป =================
 function updateBackground(imageName) {
     if (imageName && gameWindow) gameWindow.style.backgroundImage = `url('${IMAGE_PATH}${imageName}')`;
     else if (gameWindow) gameWindow.style.backgroundImage = 'none'; 
 }
 
-// 🌟 ระบบโชว์แอนิเมชันตรงกลางจอ 🌟
+// แอนิเมชันตัวเลขเด้งใหญ่ๆ ตรงกลางจอ (เช่น เวลากินข้าว)
 function showCenterFloat(text, typeClass) {
     const floater = document.createElement("div");
     floater.className = `center-floating-text ${typeClass}`;
@@ -129,6 +135,7 @@ function showCenterFloat(text, typeClass) {
     setTimeout(() => floater.remove(), 1800); 
 }
 
+// อัปเดตเงิน: เปลี่ยนตัวเลขในระบบ โชว์แอนิเมชัน และเล่นเสียง
 function updateMoney(amount) {
     money += amount;
     if (amount !== 0) {
@@ -137,6 +144,7 @@ function updateMoney(amount) {
     }
 }
 
+// อัปเดตพลังงาน
 function updateEnergy(amount) {
     let oldEnergy = energy;
     energy = Math.max(0, Math.min(100, Math.round(energy + amount)));
@@ -146,7 +154,7 @@ function updateEnergy(amount) {
     }
 }
 
-// 🌟 รวมระบบจัดการอารมณ์ไว้ที่เดียว
+// อัปเดตความสุข
 function updateMood(amount) {
     let oldMood = moodIndex;
     moodIndex = Math.max(0, Math.min(4, moodIndex + amount));
@@ -161,12 +169,14 @@ function updateMood(amount) {
     }
 }
 
+// ตรวจสอบและอัปเดต UI แถบสถานะด้านบน รวมถึงเช็คว่า Game Over หรือยัง
 function updateStats() {
     uiDay.textContent = currentDay;
     if (uiWeather && currentWeather) uiWeather.textContent = WEATHER_MAP[currentWeather].emoji;
     uiMoney.textContent = money;
     uiEnergy.textContent = energy;
     
+    // เปลี่ยนสีขอบและเงาของความสุขตามระดับอารมณ์
     if (uiMood) {
         uiMood.textContent = MOOD_LEVELS[currentLang][moodIndex];
         const moodContainer = uiMood.closest('.mood-content');
@@ -191,20 +201,18 @@ function updateStats() {
 }
 
 function randomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
-function getRandomFoods() {
-    let shuffled = [...FOOD_MENU].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, 2);
-}
+function getRandomFoods() { return [...FOOD_MENU].sort(() => 0.5 - Math.random()).slice(0, 2); }
 
-// ================= ระบบเริ่มเกมและสุ่มเงิน (Slot Machine) =================
+// ================= ระบบเริ่มเกม =================
+// เตรียมหน้าต่างและภาษาให้พร้อมก่อนเล่น
 toggleLanguage(); 
 toggleLanguage(); 
 setStory("ระบบ", "System", "ยินดีต้อนรับสู่สัปดาห์หฤโหด! กดสุ่มเงินก้อนแรกเพื่อเริ่มต้นชีวิตได้เลย", "Welcome to Survival Week! Spin for your initial fund to start living.");
 setButtons([{ lTh: "เริ่มสุ่มเงินทุน", lEn: "Spin Starting Fund", action: startMoneySpin }]);
 
+// กดเริ่มสุ่มเงิน
 async function startMoneySpin() {
     if (bgm.paused) bgm.play().catch(err => console.log("BGM play failed:", err));
-
     sfxSpin.currentTime = 0;
     sfxSpin.play().catch(err => console.log("Spin SFX play failed:", err));
 
@@ -218,6 +226,7 @@ async function startMoneySpin() {
     slotScreen.style.display = 'flex'; 
     slotContainer.innerHTML = '';
     
+    // สร้างช่องสล็อต 4 หลัก
     const TOTAL_SLOTS = 4;
     for(let i = 0; i < TOTAL_SLOTS; i++) {
         const slot = document.createElement('div');
@@ -228,6 +237,7 @@ async function startMoneySpin() {
     
     setStory("ระบบ", "System", "กำลังประมวลผลเงินทุนเริ่มต้นของคุณในสัปดาห์นี้...", "Processing your starting fund for this week...");
     
+    // สุ่มเลขทุนประเดิม
     const targetMoney = randomInt(1000, 2000);
     const moneyStr = String(targetMoney).padStart(TOTAL_SLOTS, '0');
     
@@ -235,29 +245,29 @@ async function startMoneySpin() {
     for (let i = 0; i < TOTAL_SLOTS; i++) {
         const delay = i * 200; 
         const duration = 1000 + (i * 300); 
+        // หน่วงเวลาช่องถัดๆ ไปให้หยุดช้าลงทีละสเต็ป
         const task = new Promise(r => setTimeout(r, delay))
             .then(() => animateSingleSlot(i, moneyStr[i], duration));
         animationTasks.push(task);
     }
     
-    await Promise.all(animationTasks);
-    
+    await Promise.all(animationTasks); // รอจนหยุดครบทุกช่อง
     sfxSpin.pause();
-    
     updateMoney(targetMoney);
     updateStats();
     
-    // เปลี่ยนข้อความนิดหน่อยให้เข้ากับระบบออโต้
     setStory("ระบบ", "System", 
         `สุ่มเสร็จสิ้น! คุณได้รับทุนประเดิมสัปดาห์ <b>${targetMoney} ฿</b><br>กำลังเตรียมเข้าสู่วันที่ 1...`,
         `Spin complete! You received <b>${targetMoney} ฿</b> to start.<br>Preparing Day 1...`);
     
-    // ถอดปุ่มออก และใช้ setTimeout เพื่อปิดหน้าจอออโต้
+    // พอสุ่มเสร็จ ซ่อนสล็อต และขึ้นหน้าโชว์ วันที่ 1
     setTimeout(() => {
         document.getElementById('slot-screen').style.display = 'none';
         showDayTransition(true); 
-    }, 2000); // 2000 คือหน่วงเวลา 2 วินาที (แก้ตัวเลขตรงนี้ได้เลยถ้าอยากให้ช้า/เร็วขึ้น)
+    }, 2000); 
 }
+
+// อนิเมชันแต่ละช่องสล็อต (อันนี้คงความมั่วตัวเลขไว้ให้ดูอลังการ)
 async function animateSingleSlot(index, targetDigit, duration) {
     return new Promise(resolve => {
         const slot = document.getElementById('slots').children[index];
@@ -285,24 +295,35 @@ async function animateSingleSlot(index, targetDigit, duration) {
     });
 }
 
-// ================= ระบบ Animation สรุปผลข้ามวัน =================
-async function animateFastSpin(element, targetValue, duration) {
+// ================= ระบบ Animation สรุปผลข้ามวันแบบ Counter Smooth =================
+
+// *LOGIC:* ฟังก์ชันตัวเลขวิ่งแบบ Smooth (Counter) 
+// รับค่าเริ่มต้น (startValue) และวิ่งไปยังเป้าหมาย (targetValue) ตามระยะเวลา (duration) ที่กำหนด
+async function animateCounter(element, startValue, targetValue, duration) {
     return new Promise(resolve => {
-        let ticks = duration / 30; 
-        let current = 0;
-        let timer = setInterval(() => {
-            if(current < ticks) {
-                element.textContent = Math.floor(Math.random() * 5000); 
-            } else {
-                element.textContent = targetValue; 
+        const interval = 30; // อัปเดต UI ทุกๆ 30ms ทำให้ดูเนียนตา
+        const totalSteps = Math.floor(duration / interval);
+        const valueChangePerStep = (targetValue - startValue) / totalSteps;
+        let currentStep = 0;
+        let currentValue = startValue;
+
+        const timer = setInterval(() => {
+            currentStep++;
+            currentValue += valueChangePerStep;
+            
+            // ถ้าวิ่งถึงเป้าหมาย หรือเกินสเต็ปที่กำหนด ให้เซ็ตเป็นเลขเป้าหมายเป๊ะๆ เพื่อป้องกันทศนิยม
+            if (currentStep >= totalSteps) {
+                element.textContent = targetValue;
                 clearInterval(timer);
                 resolve();
+            } else {
+                element.textContent = Math.round(currentValue); // ปัดเศษแสดงแต่จำนวนเต็ม
             }
-            current++;
-        }, 30);
+        }, interval);
     });
 }
 
+// *LOGIC:* โชว์หน้าต่างสรุปผลเปลี่ยนวัน
 async function showDayTransition(isFirstDay) {
     const screen = document.getElementById('day-transition-screen');
     const dayTitle = document.getElementById('transition-day-title');
@@ -312,40 +333,49 @@ async function showDayTransition(isFirstDay) {
     screen.style.display = 'flex';
     btnContinue.style.display = 'none'; 
 
+    // อัปเดตภาษาให้แสดงแค่วันที่อย่างเดียว (เช่น "วันที่ 4" ถ้าเป็นไทย)
     dayTitle.innerHTML = l(`วันที่ ${currentDay}`, `DAY ${currentDay}`);
 
     if(isFirstDay) {
+        // วันแรกสุดของการเริ่มเกม ข้ามกล่องสรุปเงินไปเลย
         summaryBox.style.display = 'none';
         startOfDayMoney = money; 
         setTimeout(() => { btnContinue.style.display = 'block'; }, 1500);
     } else {
+        // วันอื่นๆ โชว์สรุปการใช้เงิน
         summaryBox.style.display = 'block';
         const elStart = document.getElementById('summary-start');
         const elSpent = document.getElementById('summary-spent');
         const elRemain = document.getElementById('summary-remain');
 
+        // รีเซ็ตค่าก่อนรัน
         elStart.textContent = "0";
         elSpent.style.opacity = 0; 
         elRemain.textContent = "0";
 
         let spentAmount = startOfDayMoney - money; 
 
-        await animateFastSpin(elStart, startOfDayMoney, 600);
+        // 1. วิ่งตัวเลขเงินตั้งต้น (จาก 0 ไปยังยอดเมื่อเช้า)
+        await animateCounter(elStart, 0, startOfDayMoney, 800);
         
+        // 2. เด้งโชว์ตัวเลขที่ใช้ไปในวันนี้ (สีแดง)
         elSpent.textContent = `-${spentAmount}`;
         elSpent.style.opacity = 1;
         if(spentAmount > 0) playSfx(sfxMoodDrain); 
         
-        await new Promise(r => setTimeout(r, 400));
+        await new Promise(r => setTimeout(r, 600)); // หน่วงเวลาให้คนดูแปปนึง
         
-        await animateFastSpin(elRemain, money, 800);
+        // 3. วิ่งตัวเลขลด/เพิ่มลงมายังยอดปัจจุบัน (จากยอดเมื่อเช้า วิ่งไปหายอดคงเหลือปัจจุบัน)
+        // นี่คือจุดที่ทำให้มัน "ลดลงมาปกติ" แบบสมูท
+        await animateCounter(elRemain, startOfDayMoney, money, 1000);
         playSfx(sfxMoney); 
 
-        startOfDayMoney = money; 
+        startOfDayMoney = money; // เซฟยอดปัจจุบันเป็นยอดเช้าวันต่อไป
         btnContinue.style.display = 'block'; 
     }
 }
 
+// กดปุ่มเพื่อลุยต่อเข้าสู่ตอนเช้า
 function closeDayTransition() {
     document.getElementById('day-transition-screen').style.display = 'none';
     startNewDay(tempBonusTh, tempBonusEn); 
@@ -353,16 +383,20 @@ function closeDayTransition() {
 }
 
 // ================= ระบบนอนหลับพักผ่อน =================
+// *LOGIC:* เมื่อกดปุ่มนอนหลับ จะมาเข้าฟังก์ชันนี้ก่อน
 function sleepAndStartNewDay() {
     tempBonusTh = "";
     tempBonusEn = "";
     
+    // โอกาส 40% ที่จะได้บัฟอารมณ์ดีตอนเช้า
     if (Math.random() < 0.4 && moodIndex < 4) {
-        updateMood(1); // ความสุขเด้งโชว์ขึ้นจอ + เล่นเสียงทันที
+        updateMood(1); 
+        // เซฟข้อความบัฟไว้ โชว์ตอนหน้าจอเปลี่ยนเป็นเช้า
         tempBonusTh = "<span style='color:#ffe000;'>เมื่อคืนหลับสนิทมาก ตื่นมาเลยอารมณ์ดีเป็นพิเศษ! (ความสุขเพิ่มขึ้น 1 ระดับ)</span><br><br>";
         tempBonusEn = "<span style='color:#ffe000;'>Slept really well last night, woke up feeling great! (Mood up 1 level)</span><br><br>";
     }
     
+    // เรียกหน้าต่าง Day Transition แทนที่จะเปลี่ยนฉากไปเลย
     showDayTransition(false);
 }
 
@@ -388,6 +422,7 @@ function startNewDay(bonusTh = "", bonusEn = "") {
     ]);
 }
 
+// *LOGIC:* กินข้าว แล้วคำนวณสเตตัสตามสภาพอากาศ 
 function eatFood(food, nextPhase) {
     updateMoney(-food.price);
     updateEnergy(food.price * 1.2); 
@@ -403,13 +438,16 @@ function eatFood(food, nextPhase) {
     }
 }
 
+// *LOGIC:* ฟังก์ชันหลักที่ขับเคลื่อนเนื้อเรื่อง (State Machine) รับ Phase ถัดไปและแสดงเนื้อเรื่อง
 function proceedTo(phase, senderTh, senderEn, prevMsgTh, prevMsgEn) {
     if (moodProtectTurns > 0) moodProtectTurns--; 
     
     currentPhase = phase;
     updateStats();
+    // ถ้าสเตตัสพัง ให้ Game Over หยุดวงจรทันที
     if (money < 0 || energy <= 0 || moodIndex === 0) return; 
 
+    // เปลี่ยนแปลงเนื้อเรื่องและปุ่มกดตาม Phase ต่างๆ ในวัน
     if (phase === "morning_travel") {
         setStory(senderTh, senderEn, 
             `${prevMsgTh}<br><br><span style="color:#eee">สายแล้ว! จะไปมหาลัยยังไงดี?</span>`,
@@ -502,6 +540,7 @@ function travel(method, nextPhase) {
             msgEn = "Walking under the burning sun drains energy fast! Ugh... I'm fainting";
         } else if (currentWeather === "rainy") {
             updateEnergy(-10);
+            updateMood(-1); 
             msgTh = "เดินลุยฝนกลับหอ เปียกปอนไปหมด เฉอะแฉะชะมัด!";
             msgEn = "Walking through the rain, got completely soaked. So wet!";
         } else {
@@ -515,8 +554,8 @@ function travel(method, nextPhase) {
 
 function buyDrink(nextPhase) {
     updateMoney(-40);
-    updateMood(1); // ความสุขเด้งโชว์ขึ้นจอ + เล่นเสียงทันที
-    moodProtectTurns = 2; 
+    updateMood(1); 
+    moodProtectTurns = 2; // บัฟไม่ให้อารมณ์ตกตอนเรียน
     
     proceedTo(nextPhase, "พ่อค้าน้ำปั่น", "Smoothie Vendor", 
         "ขอบคุณครับน้อง! น้ำปั่นเย็นๆ ชื่นใจ ความสุขพุ่งปรี๊ด!",
@@ -539,9 +578,7 @@ function doStudy(lang, willMoodDrop) {
                 ? `<br><i>อาจารย์สั่งงานเยอะ แต่ยังอารมณ์ดีจากน้ำปั่นอยู่!`
                 : `<br><i>Lots of homework, but the smoothie kept you happy!`;
         } else {
-            if (lang === 'th') {
-                updateMood(-1); //  อารมณ์ตกเด้งโชว์ขึ้นจอ + เล่นเสียงทันที
-            }
+            if (lang === 'th') updateMood(-1);
             msg += lang === 'th' 
                 ? `<br><i>แถมอาจารย์สั่งงานเยอะมาก เครียดเลย... ความสุขลดลง 1 ระดับ!`
                 : `<br><i>Plus, the prof gave so much homework. Stressed... Happiness drops`;
