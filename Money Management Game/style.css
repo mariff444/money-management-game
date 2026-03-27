@@ -194,3 +194,77 @@ body {
   20% { opacity: 1; margin-top: 0px; transform: translate(-50%, -50%) scale(1.1); }
   100% { opacity: 0; margin-top: -150px; transform: translate(-50%, -50%) scale(1); }
 }
+
+/* ==========================================================
+   =============== โหมดมือถือ (แสดงผลเฉพาะจอมือถือเท่านั้น) ===============
+   ========================================================== */
+
+/* 🌟 เปลี่ยนจาก 768px เป็น 767px เพื่อให้ iPad กลายเป็นจอคอมพิวเตอร์ */
+@media screen and (max-width: 767px) {
+  .status-board-container { 
+    padding: 15px 15px; 
+  }
+  
+  .status-board {
+    display: flex;
+    flex-direction: row; 
+    flex-wrap: wrap; 
+    justify-content: center;
+    align-items: center;
+    gap: 8px; 
+  }
+
+  .left-side, .right-side {
+    display: contents; 
+  }
+
+  .left-side .capsule { order: 1; } 
+  .right-side .capsule { order: 2; } 
+  
+  .btn-lang { 
+    order: 3; 
+    margin-right: auto; 
+  }     
+  
+  .capsule-circle-weather { 
+    order: 4; 
+    position: static; 
+    width: 50px; 
+    height: 50px; 
+    margin: 0;
+  }
+  #weather-ui { font-size: 1.5rem; }
+
+  .mood-content { 
+    order: 5; 
+    margin-left: auto; 
+  } 
+
+  .capsule, .mood-content, .btn-lang {
+    font-size: 0.9rem;
+    padding: 6px 12px;
+  }
+  
+  .icon { font-size: 1rem; margin-right: 3px; }
+
+  .circle-ui-bg { 
+    width: 250px; 
+    height: 250px; 
+    top: -50px; 
+  }
+
+  .action-buttons { 
+    left: 50%; 
+    transform: translateX(-50%); 
+    bottom: 380px; 
+    width: 90%; 
+  }
+  
+  .center-floating-text { font-size: 2.2rem; }
+  
+  .story-box { 
+    font-size: 1rem; 
+    min-height: 250px; 
+    padding: 20px 15px 15px 15px; 
+  }
+}
