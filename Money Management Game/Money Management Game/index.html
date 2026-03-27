@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Survival Week Game</title>
+    <link href="https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/LINESeedSansTH/LINESeedSansTH.css" rel="stylesheet" />
+    <link href="style.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="game-window">
+        <div class="status-board-container">
+            <img src="image/circle-ui.png" alt="Mood Circle" class="circle-ui-bg">
+            
+            <div class="status-board">
+                <div class="left-side">
+                    <div class="capsule">
+                        <span id="stat-money" style="position: relative;">
+                            <span class="icon">💰</span> <span id="lbl-money">เงิน:</span> <span class="money-value" id="money-ui" style="margin-left: 5px; margin-right: 5px;">0</span> ฿
+                        </span>
+                        <span class="divider">|</span>
+                        <span id="stat-energy" style="position: relative;">
+                            <span class="icon">⚡</span> <span id="lbl-energy">พลัง:</span> <span id="energy-ui" style="margin-left: 5px; margin-right: 5px;">100</span>/100
+                        </span>
+                    </div>
+                    <button class="btn-lang" onclick="toggleLanguage()">TH/ENG</button>
+                </div>
+
+                <div class="right-side">
+                    <div class="capsule-circle-weather">
+                        <span id="weather-ui">☀️</span>
+                    </div>
+
+                    <div class="capsule">
+                        <span class="icon">📅</span> <span id="lbl-date">วันที่:</span> <span id="day-ui" style="margin-left: 5px; margin-right: 5px;">1</span>/7
+                        <span class="divider">|</span>
+                        <span class="icon">⏰</span> <span id="lbl-time">เวลา:</span> <span id="time-ui" style="margin-left: 5px;">เช้า</span>
+                    </div>
+
+                    <div class="mood-content">
+                        <span class="icon">😊</span>
+                        <span class="mood-value" id="mood-ui" style="margin-left: 5px;">ปกติ</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="slot-screen" class="slot-screen" style="display: none;">
+            <h2 id="slot-title">เงินทุนของคุณคือ</h2>
+            <div class="slots-container" id="slots"></div>
+        </div>
+
+        <div id="day-transition-screen" class="slot-screen" style="display: none; z-index: 150;">
+            <h1 id="transition-day-title" class="day-title-text">วันที่ 1</h1>
+            
+            <div id="daily-summary" class="summary-box" style="display: none;">
+                <p><span id="lbl-sum-start">เงินเริ่มต้น:</span> <span id="summary-start" class="spin-num">0</span> ฿</p>
+                <p class="spent-text"><span id="lbl-sum-spent">ใช้ไป:</span> <span id="summary-spent">-0</span> ฿</p>
+                <hr class="summary-divider">
+                <p><span id="lbl-sum-remain">คงเหลือ:</span> <span id="summary-remain" class="spin-num remain-text">0</span> ฿</p>
+            </div>
+
+            <button id="btn-continue-day" class="btn-lang" style="margin-top: 25px; display: none;" onclick="closeDayTransition()">ลุยต่อ! / Let's go!</button>
+        </div>
+
+        <div class="action-buttons" id="action-area"></div>
+
+        <div class="dialogue-wrapper">
+            <div class="name-tag" id="speaker-name">ระบบ</div>
+            <div class="story-box" id="story-text">
+                กำลังโหลดเนื้อเรื่อง...
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
