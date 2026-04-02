@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Survival Week Game</title>
+    <title>Money Management Game</title>
     <link href="https://cdn.jsdelivr.net/gh/lazywasabi/thai-web-fonts@7/fonts/LINESeedSansTH/LINESeedSansTH.css" rel="stylesheet" />
     <link href="style.css" rel="stylesheet" />
 </head>
 <body>
     <div class="game-window">
+        
         <div class="status-board-container">
             <img src="image/circle-ui.png" alt="Mood Circle" class="circle-ui-bg">
             
@@ -16,13 +17,18 @@
                 <div class="left-side">
                     <div class="capsule">
                         <span id="stat-money" style="position: relative;">
-                            <span class="icon">💰</span> <span id="lbl-money">เงิน:</span> <span class="money-value" id="money-ui" style="margin-left: 5px; margin-right: 5px;">0</span> ฿
+                            <span class="icon">💰</span> 
+                            <span id="lbl-money">เงิน:</span> 
+                            <span class="money-value" id="money-ui" style="margin-left: 5px; margin-right: 5px;">0</span> ฿
                         </span>
                         <span class="divider">|</span>
                         <span id="stat-energy" style="position: relative;">
-                            <span class="icon">⚡</span> <span id="lbl-energy">พลัง:</span> <span id="energy-ui" style="margin-left: 5px; margin-right: 5px;">100</span>/100
+                            <span class="icon">⚡</span> 
+                            <span id="lbl-energy">พลัง:</span> 
+                            <span id="energy-ui" style="margin-left: 5px; margin-right: 5px;">100</span>/100
                         </span>
                     </div>
+                    <button id="btn-sound" class="btn-lang" onclick="toggleSound()">🔊</button>
                     <button class="btn-lang" onclick="toggleLanguage()">TH/ENG</button>
                 </div>
 
@@ -32,9 +38,13 @@
                     </div>
 
                     <div class="capsule">
-                        <span class="icon">📅</span> <span id="lbl-date">วันที่:</span> <span id="day-ui" style="margin-left: 5px; margin-right: 5px;">1</span>/7
+                        <span class="icon">📅</span> 
+                        <span id="lbl-date">วันที่:</span> 
+                        <span id="day-ui" style="margin-left: 5px; margin-right: 5px;">1</span>/7
                         <span class="divider">|</span>
-                        <span class="icon">⏰</span> <span id="lbl-time">เวลา:</span> <span id="time-ui" style="margin-left: 5px;">เช้า</span>
+                        <span class="icon">⏰</span> 
+                        <span id="lbl-time">เวลา:</span> 
+                        <span id="time-ui" style="margin-left: 5px;">เช้า</span>
                     </div>
 
                     <div class="mood-content">
@@ -45,34 +55,91 @@
             </div>
         </div>
 
-        <div id="slot-screen" class="slot-screen" style="display: none;">
+        <div id="ui-blocker" class="ui-blocker" style="display: none;"></div>
+
+        <div id="slot-screen" class="slot-screen" style="display: none; z-index: 150;">
             <h2 id="slot-title">เงินทุนของคุณคือ</h2>
             <div class="slots-container" id="slots"></div>
         </div>
 
-        <div id="day-transition-screen" class="slot-screen" style="display: none; z-index: 150;">
+        <div id="day-announcement-screen" class="slot-screen" style="display: none; z-index: 180;">
+            <h1 id="announcement-day-title" class="day-title-text" style="font-size: 4rem; margin: 20px;">วันที่ 1</h1>
+        </div>
+
+        <div id="day-transition-screen" class="slot-screen final-screen-size" style="display: none; z-index: 150;">
             <h1 id="transition-day-title" class="day-title-text">วันที่ 1</h1>
             
             <div id="daily-summary" class="summary-box" style="display: none;">
-                <p><span id="lbl-sum-start">เงินเริ่มต้น:</span> <span id="summary-start" class="spin-num">0</span> ฿</p>
-                <p class="spent-text"><span id="lbl-sum-spent">ใช้ไป:</span> <span id="summary-spent">-0</span> ฿</p>
+                <p>
+                    <span id="lbl-sum-start">เงินเริ่มต้น:</span> 
+                    <span id="summary-start" class="spin-num">0</span> ฿
+                </p>
+                <p class="spent-text">
+                    <span id="lbl-sum-spent">ใช้ไป:</span> 
+                    <span id="summary-spent">-0</span> ฿
+                </p>
                 <hr class="summary-divider">
-                <p><span id="lbl-sum-remain">คงเหลือ:</span> <span id="summary-remain" class="spin-num remain-text">0</span> ฿</p>
+                <p>
+                    <span id="lbl-sum-remain">คงเหลือ:</span> 
+                    <span id="summary-remain" class="spin-num remain-text">0</span> ฿
+                </p>
             </div>
 
-            <button id="btn-continue-day" class="btn-lang" style="margin-top: 25px; display: none;" onclick="closeDayTransition()">ลุยต่อ! / Let's go!</button>
+            <button id="btn-continue-day" class="btn-lang" style="margin-top: 15px; display: none; font-size: 1.3rem; padding: 12px 30px;" onclick="closeDayTransition()">
+                ลุยต่อ!
+            </button>
+        </div>
+
+        <div id="final-summary-screen" class="slot-screen final-screen-size" style="display: none; z-index: 200;">
+            <h1 id="final-title" class="day-title-text" style="color: #40d668; margin-bottom: 10px;">รอดชีวิตครบ 7 วัน!</h1>
+            
+            <div class="summary-box">
+                <p>
+                    <span id="lbl-final-start">เงินทุนเริ่มต้น:</span> 
+                    <span id="final-start" class="spin-num" style="color: #ccc;">0</span> ฿
+                </p>
+                <hr class="summary-divider">
+                <p style="font-size: 1.5rem; margin-top: 10px;">
+                    <span id="lbl-final-score">เงินเก็บคงเหลือ:</span> 
+                    <span id="final-score" class="spin-num remain-text">0</span> ฿
+                </p>
+                
+                <div id="final-grade-container" style="margin-top: 15px; opacity: 0; transition: opacity 1s ease;">
+                    <p id="lbl-final-grade" style="font-size: 1.1rem; color: #aaa; margin-bottom: -5px;">ระดับการเงินของคุณ</p>
+                    <div id="final-grade" class="grade-display">S</div>
+                    <p id="final-grade-desc" style="font-size: 1.2rem; margin-top: 5px; font-weight: bold;">เศรษฐีขนาดย่อม!</p>
+                </div>
+
+                <div id="final-mood-container" style="margin-top: 10px; opacity: 0; transition: opacity 1s ease;">
+                    <p id="lbl-final-mood" style="font-size: 1rem; color: #aaa; margin-bottom: 5px;">สภาพจิตใจโดยรวม</p>
+                    <div style="font-size: 1.3rem; font-weight: bold; background: rgba(255,255,255,0.1); padding: 5px 20px; border-radius: 50px; display: inline-block;">
+                        <span id="final-mood-emoji">😊</span> 
+                        <span id="final-mood-text" style="color: #ffd80e; margin-left: 10px;">ปกติ</span>
+                    </div>
+                </div>
+            </div>
+
+            <button id="btn-share" class="btn-lang" style="margin-top: 15px; display: none; background-color: #00d2ff; color: #000; border-color: #00d2ff;" onclick="exportResult()">
+                บันทึกผลประกอบการ 📸
+            </button>
+            <button id="btn-play-again" class="btn-lang" style="margin-top: 15px; display: none;" onclick="resetGameToStart()">
+                เล่นอีกครั้ง / Play Again
+            </button>
+
         </div>
 
         <div class="action-buttons" id="action-area"></div>
 
-        <div class="dialogue-wrapper">
+        <div class="dialogue-wrapper" id="dialogue-box">
             <div class="name-tag" id="speaker-name">ระบบ</div>
             <div class="story-box" id="story-text">
                 กำลังโหลดเนื้อเรื่อง...
             </div>
         </div>
+        
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
